@@ -1,0 +1,20 @@
+http:
+  port: "8081"
+
+weatherService:
+  wsdl: "http://157.245.123.251/GlobalWeather?WSDL"
+  service: "GlobalWeather"
+  port: "GlobalWeatherHttpGet"
+  address: "http://157.245.123.251/GlobalWeather?WSDL"
+
+weatherService2:
+  wsdl: "http://www.webservicex.com/globalweather.asmx?WSDL "
+  service: "GlobalWeather"
+  port: "GlobalWeatherSoap12"
+  address: "http://www.webservicex.com/globalweather.asmx?WSDL "
+
+weatherService3:
+  wsdl: "http://localhost/GlobalWeather?WSDL"
+  service: "GlobalWeather"
+  port: "GlobalWeatherSoap12"
+  address: "http://localhost/GlobalWeather?WSDL"

@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="countryNameType" format="java">
+      <types:shape format="raml"><![CDATA[#%RAML 1.0 DataType
+type: string]]></types:shape>
+    </types:type>
+    <types:type name="webservice" format="xml">
+      <types:example format="xml" element="{http://www.webserviceX.NET}GetCitiesByCountryResponse" location="examples/Example_Resp_GetCityByCounty.xml"/>
+    </types:type>
+    <types:type name="getCityByCountryInputType" format="xml">
+      <types:example format="xml" element="{http://schemas.xmlsoap.org/soap/envelope/}Envelope" location="examples/Example_Req_GetCityByCounty.xml"/>
+    </types:type>
+    <types:type name="jsonInput" format="json">
+      <types:shape format="weave" example="examples/getCityByCountry_jsonInput.json"><![CDATA[%dw 2.0
+
+type jsonInput = {| countryName: String |} {"example": "{\"countryName\":\"Australia\"}"}
+
+]]></types:shape>
+    </types:type>
+  </types:catalog>
+</types:mule>

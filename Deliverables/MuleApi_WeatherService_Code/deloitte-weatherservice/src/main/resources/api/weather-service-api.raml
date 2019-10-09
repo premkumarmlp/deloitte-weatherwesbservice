@@ -1,0 +1,58 @@
+#%RAML 1.0
+version: v1
+title: Weather Service API
+
+types :
+  CitiesDataType: !include examples/CitiesDataType.raml
+  WeatherDataType: !include examples/WeatherDataType.raml
+
+/cities:
+  get:
+    description: Retrieves cities based on the given query parameters.
+    queryParameters:
+      countryName:
+        description: The system will look for cities from the given countryName in the parameter.
+        required: false
+        type: string 
+    responses:
+      400:
+        body:
+          application/json:
+            example: {
+              "message": "Error retrieving cities from the Weather Service API."
+            }
+      200:
+        description: Returns an list of Cities in JSON
+        body:
+          application/json:
+            type: CitiesDataType
+            example: !include examples/CitiesExample.raml
+
+/weather:
+  get:
+    description: Retrieves Weather details based on the given query parameters.
+    queryParameters:
+      countryName:
+        description: The system will look for weather from the given countryName in the parameter.
+        required: false
+        type: string 
+      cityName:
+        description: The system will look for weather from the given cityName in the parameter.
+        required: false
+        type: string 
+    responses:
+      400:
+        body:
+          application/json:
+            example: {
+              "message": "Error retrieving weather data from the Weather Service API."
+            }
+      200:
+        description: Returns weahter data in JSON
+        body:
+          application/json:
+            type: WeatherDataType
+            example:  !include examples/WeatherExample.raml
+    
+
+

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:wsc="http://www.mulesoft.org/schema/mule/wsc"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="eeaa2f30-f73a-452c-b81c-cadbc750a59c" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<wsc:config name="Weather_Web_Service_Consumer_Config" doc:name="Web Service Consumer Config" doc:id="7ecba8c5-ca8e-4373-89e0-504622e7769b" >
+		<wsc:connection wsdlLocation="${weatherService.wsdl}" service="${weatherService.service}" port="${weatherService.port}" soapVersion="SOAP12" address="${weatherService.address}"/>
+	</wsc:config>
+	<configuration-properties doc:name="Configuration properties" doc:id="ade0dddf-538f-4c48-9caa-96a737b188cc" file="config.yaml" />
+	<flow name="getCities" doc:id="c55e8ef1-3fc3-49bb-bae5-9a5912eb1467" >
+		<logger level="INFO" doc:name="Logger" doc:id="8c10b6b9-1fad-4d12-9955-b3df56c5e8aa" message="'CountryName=' #[message.attributes.queryParams.countryName]"/>
+		<ee:transform doc:name="Transform Message" doc:id="84f6aa45-deed-4dfd-9410-899b9fe6f3c6" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+ns ns0 http://www.webserviceX.NET
+---
+{
+	ns0#GetCitiesByCountry: {
+	ns0#CountryName: message.attributes.queryParams.countryName 
+}
+}
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<wsc:consume operation="GetCitiesByCountry" doc:name="Get Cities" doc:id="1f8fed03-c5da-4254-8587-ae2a8b340bde" config-ref="Weather_Web_Service_Consumer_Config"/>
+		<ee:transform doc:name="Transform Message" doc:id="de62d9ab-be03-446a-930e-9f3ac60119f4" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload.body]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="getWeather" doc:id="a102f38f-9515-4ca7-9934-76375a7c2527" >
+		<logger level="INFO" doc:name="Logger" doc:id="43cf4249-68b4-4cad-ac4e-e8399c624209" message="'CountryName=' #[message.attributes.queryParams.countryName]  'City Name='  #[message.attributes.queryParams.cityName]"/>
+		<ee:transform doc:name="Transform Message" doc:id="8ef9cffd-12e6-4cd9-ad4a-2da6b50bbf4b" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+ns ns0 http://www.webserviceX.NET
+---
+{
+	ns0#GetWeather: {
+		ns0#CityName: message.attributes.queryParams.cityName ,
+		ns0#CountryName: message.attributes.queryParams.countryName 
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<wsc:consume doc:name="Get Weather" doc:id="1dd0fc9d-ab66-4e29-881a-8e66c29e05b6" config-ref="Weather_Web_Service_Consumer_Config" operation="GetWeather"/>
+		<ee:transform doc:name="Transform Message" doc:id="7c4e975d-2fb2-4fba-bfe5-dc38db2b2840" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload.body]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
